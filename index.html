@@ -15,12 +15,21 @@ button { padding:15px 25px; font-size:18px; margin-top:10px; border-radius:10px;
 <h2>🎮 Tap Box Game</h2>
 <p>Score: <span id="score">0</span></p>
 <p>Time Left: <span id="timer">30</span> sec</p>
+<p>High Score: <span id="highScore">0</span></p>
 <div id="game">
   <div id="box"></div>
 </div>
 <button id="restartBtn" style="display:none;">Restart Game</button>
-
+<audio id="clickSound" src="click.mp3"></audio>
 <script>
+let clickSound = document.getElementById("clickSound");
+let highScore = localStorage.getItem("highScore") || 0;
+box.onclick = function() {
+  score++;
+  scoreDisplay.innerText = score;
+  moveBox();
+  clickSound.play(); // Sound play
+}
 let score = 0;
 let timeLeft = 30;
 let box = document.getElementById("box");
@@ -28,6 +37,9 @@ let game = document.getElementById("game");
 let scoreDisplay = document.getElementById("score");
 let timerDisplay = document.getElementById("timer");
 let restartBtn = document.getElementById("restartBtn");
+let clickSound = document.getElementById("clickSound");
+let highScore = localStorage.getItem("highScore") || 0;
+document.getElementById("highScore").innerText = highScore;
 
 function moveBox() {
   let maxX = game.clientWidth - 80;
@@ -64,15 +76,21 @@ box.onclick = function() {
   score++;
   scoreDisplay.innerText = score;
   moveBox();
+  clickSound.play();
+
+  if(score > highScore){
+    highScore = score;
+    localStorage.setItem("highScore", highScore);
+    document.getElementById("highScore").innerText = highScore;
+  }
 }
 
-// Restart button
 restartBtn.onclick = function() {
   startGame();
 }
 
-// Start automatically
 startGame();
+
 </script>
 
 </body>
