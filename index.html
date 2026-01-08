@@ -4,53 +4,33 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tap Box Game</title>
 <style>
-body {
-  margin: 0;
-  font-family: Arial;
-  text-align: center;
-}
-
-#game {
-  width: 100%;
-  height: 80vh;
-  position: relative;
-  background: #f2f2f2;
-}
-
-#box {
-  width: 80px;
-  height: 80px;
-  background: red;
-  position: absolute;
-  border-radius: 10px;
-}
+body { margin:0; font-family:Arial; text-align:center; }
+#game { width:100%; height:80vh; position:relative; background:#f2f2f2; }
+#box { width:80px; height:80px; background:red; position:absolute; border-radius:10px; cursor:pointer; }
+button { padding:15px 25px; font-size:18px; margin-top:10px; border-radius:10px; }
 </style>
 </head>
 <body>
+
 <h2>🎮 Tap Box Game</h2>
-<p>Time Left: <span id="timer">60</span> sec</p>
-<p>High Score: <span id="highScore">0</span></p>
-<audio id="clickSound" src="click.mp3"></audio>
+<p>Score: <span id="score">0</span></p>
+<p>Time Left: <span id="timer">30</span> sec</p>
 <div id="game">
   <div id="box"></div>
 </div>
+<button id="restartBtn" style="display:none;">Restart Game</button>
+
 <script>
 let score = 0;
+let timeLeft = 30;
 let box = document.getElementById("box");
 let game = document.getElementById("game");
+let scoreDisplay = document.getElementById("score");
+let timerDisplay = document.getElementById("timer");
+let restartBtn = document.getElementById("restartBtn");
 
 function moveBox() {
-  let timeLeft = 30; // seconds
-let timer = setInterval(function(){
-    timeLeft--;
-    document.getElementById("timer").innerText = timeLeft;
-    if(timeLeft <= 0){
-        clearInterval(timer);
-        alert("Game Over! Your score: " + score);
-        location.reload(); // restart game
-    }
-}, 1000);
-let maxX = game.clientWidth - 80;
+  let maxX = game.clientWidth - 80;
   let maxY = game.clientHeight - 80;
   let x = Math.random() * maxX;
   let y = Math.random() * maxY;
@@ -58,25 +38,42 @@ let maxX = game.clientWidth - 80;
   box.style.top = y + "px";
 }
 
-box { width: 80px; height: 80px; border-radius: 15px; }
-body { font-size: 18px; }
-box.onclick = function () {
-  score++;
-  let highScore = localStorage.getItem("highScore") || 0;
+function startGame() {
+  score = 0;
+  timeLeft = 30;
+  scoreDisplay.innerText = score;
+  timerDisplay.innerText = timeLeft;
+  restartBtn.style.display = "none";
+  box.style.display = "block";
 
-function updateHighScore() {
-    if(score > highScore){
-        highScore = score;
-        localStorage.setItem("highScore", highScore);
-    }
-    document.getElementById("highScore").innerText = highScore;
-}
-document.getElementById("clickSound").play();
-document.getElementById("score").innerText = score;
   moveBox();
-};
 
-moveBox();
+  timerInterval = setInterval(function(){
+    timeLeft--;
+    timerDisplay.innerText = timeLeft;
+    if(timeLeft <= 0){
+      clearInterval(timerInterval);
+      box.style.display = "none";
+      alert("Game Over! Your score: " + score);
+      restartBtn.style.display = "inline-block";
+    }
+  }, 1000);
+}
+
+box.onclick = function() {
+  score++;
+  scoreDisplay.innerText = score;
+  moveBox();
+}
+
+// Restart button
+restartBtn.onclick = function() {
+  startGame();
+}
+
+// Start automatically
+startGame();
 </script>
+
 </body>
 </html>
